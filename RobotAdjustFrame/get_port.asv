@@ -1,0 +1,31 @@
+% 获取所有可用的串口号
+function ports = get_port()
+    % 定义一个返回串口名称的字符串数组
+    ports = ["COM1", "COM2", "COM3", "COM4"];
+end
+ports = serialportlist;
+%disp(ports(1));
+serial_devices = struct('name', {}, 'port', {});%初始化结构体
+% 遍历每个串口并获取设备名称
+for i = 1:length(ports)
+    %portInfo = instrhwinfo('serial', ports{i});
+    % 指定的端口号
+   
+
+% 构建 PowerShell 命令，动态插入 port 变量
+    command = ['powershell "Get-WmiObject Win32_PnPEntity | Where-Object { $_.Name -match ''', char(ports(i)), ''' } | Select-Object -ExpandProperty Name"'];
+    %matlab中的两种字符串类型：字符向量（字符数组）和字符向量，system需要的是字符向量
+% 运行 PowerShell 命令并获取输出
+    [status, cmdout] = system(command);
+    disp(i);
+    %disp(cmdout);
+    %serial_devices(i).name=extractBefore(string(cmdout), " (");
+    serial_devices(i).name=string(cmdout);
+    serial_devices(i).port=ports(i);
+    portInfo(i) = extractBetween(serial_devices(i).name, "(", ")");
+end
+
+disp(portInfo(2));
+
+
+
